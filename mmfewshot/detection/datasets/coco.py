@@ -232,6 +232,7 @@ class FewShotCocoDataset(BaseFewShotDataset, CocoDataset):
             info['ann'] = self._get_ann_info(info)
             # to support different version of coco since some annotation file
             # contain images from train2014 and val2014 at the same time
+            # TODO: 加入合成数据的选项
             if 'train2014' in info['filename']:
                 info['filename'] = 'train2014/' + info['filename']
             elif 'val2014' in info['filename']:
@@ -240,6 +241,8 @@ class FewShotCocoDataset(BaseFewShotDataset, CocoDataset):
                 info['filename'] = 'val2017/' + info['filename']
             elif 'instances_train2017' in ann_file:
                 info['filename'] = 'train2017/' + info['filename']
+            else:
+                info['filename'] = 'syn/images/' + info['filename']
             data_infos.append(info)
             ann_ids = self.coco.get_ann_ids(img_ids=[i])
             total_ann_ids.extend(ann_ids)
@@ -626,6 +629,7 @@ class FewShotCocoDefaultDataset(FewShotCocoDataset):
             annotation from `DEFAULT_ANN_CONFIG`.
             For example: [dict(method='TFA', setting='1shot')].
     """
+    # 修改此处，就能更改数据集指向
     coco_benchmark = {
         f'{shot}SHOT': [
             dict(
@@ -639,7 +643,18 @@ class FewShotCocoDefaultDataset(FewShotCocoDataset):
 
     # pre-defined annotation config for model reproducibility
     DEFAULT_ANN_CONFIG = dict(
-        TFA=coco_benchmark,
+        # TFA=coco_benchmark,
+        TFA={
+        f'{shot}SHOT': [
+            dict(
+                type='ann_file',
+                ann_file='/data/jyq/project/HD-Painter/detaug/data/ControlAug/cnet/experiments/coco10s1_512p/mix_n600_HED_p512_prblip_large_dfsNone_seed1_imprior_avgacsl30/annotation.json'),
+            dict(
+                type='ann_file',
+                ann_file='/data/jyq/project/VFA/mmfewshot/data/few_shot_ann/coco/benchmark_10shot_base_merged.json')
+        ]
+            for shot in [10, 30]
+        },
         FSCE=coco_benchmark,
         Attention_RPN={
             **coco_benchmark, 'Official_10SHOT': [

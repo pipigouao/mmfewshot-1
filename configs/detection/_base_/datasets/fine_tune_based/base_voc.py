@@ -1,4 +1,4 @@
-# dataset settings
+ # dataset settings
 img_norm_cfg = dict(
     mean=[103.530, 116.280, 123.675], std=[1.0, 1.0, 1.0], to_rgb=False)
 train_pipeline = [

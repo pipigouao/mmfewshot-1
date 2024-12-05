@@ -6,21 +6,17 @@ _base_ = [
 # classes splits are predefined in FewShotCocoDataset
 # FewShotCocoDefaultDataset predefine ann_cfg for model reproducibility
 data = dict(
-    samples_per_gpu=5,  # 原本是2*8，现在设成5*3
-    workers_per_gpu=2,
+    samples_per_gpu=5,
     train=dict(
         type='FewShotCocoDefaultDataset',
-        ann_cfg=[dict(method='TFA', setting='30SHOT')],
-        num_novel_shots=30,
-        num_base_shots=30))
-evaluation = dict(interval=120000)
-checkpoint_config = dict(interval=120000)
+        ann_cfg=[dict(method='TFA', setting='10SHOT')],
+        num_novel_shots=10,
+        num_base_shots=10))
+evaluation = dict(interval=80000)
+checkpoint_config = dict(interval=80000)
 optimizer = dict(lr=0.001)
-lr_config = dict(
-    warmup_iters=10, step=[
-        216000,
-    ])
-runner = dict(max_iters=240000)
+lr_config = dict(warmup_iters=10, step=[144000])
+runner = dict(max_iters=160000)
 model = dict(roi_head=dict(bbox_head=dict(num_classes=80)))
 # base model needs to be initialized with following script:
 #   tools/detection/misc/initialize_bbox_head.py

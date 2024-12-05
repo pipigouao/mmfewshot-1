@@ -27,5 +27,4 @@ runner = dict(max_iters=4000)
 # base model needs to be initialized with following script:
 #   tools/detection/misc/initialize_bbox_head.py
 # please refer to configs/detection/tfa/README.md for more details.
-load_from = ('work_dirs/tfa_r101_fpn_voc-split1_base-training/'
-             'base_model_random_init_bbox_head.pth')
+load_from = ('/data/jyq/project/VFA/mmfewshot/ckpt/tfa/voc/split1_step2/tfa_r101_fpn_voc-split1_base-training_20211031_114821_random-init-bbox-head-1e681852.pth')

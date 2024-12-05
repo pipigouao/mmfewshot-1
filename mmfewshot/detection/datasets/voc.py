@@ -254,6 +254,11 @@ class FewShotVOCDataset(BaseFewShotDataset):
                 dataset_year = 'VOC2012'
                 img_id = img_name.split('/')[-1].split('.')[0]
                 filename = img_name
+            # 合成图片的路径
+            elif 'syn' in img_name:
+                dataset_year = 'syn'
+                img_id = img_name.split('.')[0]
+                filename = f'voc_fsod/syn_images/{img_name}'
             # ann file in image id format
             elif 'VOC2007' in ann_file:
                 dataset_year = 'VOC2007'
@@ -582,7 +587,7 @@ class FewShotVOCDefaultDataset(FewShotVOCDataset):
             annotation from `DEFAULT_ANN_CONFIG`.
             For example: [dict(method='TFA', setting='SPILT1_1shot')].
     """
-
+    # TODO: voc benchmark
     voc_benchmark = {
         f'SPLIT{split}_{shot}SHOT': [
             dict(
@@ -597,7 +602,30 @@ class FewShotVOCDefaultDataset(FewShotVOCDataset):
 
     # pre-defined annotation config for model reproducibility
     DEFAULT_ANN_CONFIG = dict(
-        TFA=voc_benchmark,
+        # TFA={f'{shot}SHOT':[
+        #     dict(
+        #         type='ann_file',
+        #         ann_file='data/few_shot_ann/voc/5shot_merge/split1/base/train.txt'  # base
+        #     ),
+        #     dict(
+        #         type='ann_file',
+        #         ann_file='/data/jyq/project/VFA/mmfewshot/data/few_shot_ann/voc/5shot_merge/split1/novel/Syn_and_Novel.txt'  # novel + syn
+        #     )
+        #     ] for shot in [10, 30]
+        #              },
+        TFA={
+            f'SPLIT{split}_{shot}SHOT': [
+                dict(
+                    type='ann_file',
+                    ann_file='data/few_shot_ann/voc/5shot_merge/split1/base/train.txt'  # base
+                ),
+                dict(
+                    type='ann_file',
+                    ann_file='/data/jyq/project/VFA/mmfewshot/data/few_shot_ann/voc/5shot_merge/split1/novel/Syn_and_Novel.txt'  # novel + syn
+                )
+            ]
+            for shot in [1, 2, 3, 5, 10] for split in [1, 2, 3]
+        },
         FSCE=voc_benchmark,
         Attention_RPN=voc_benchmark,
         MPSR=voc_benchmark,
@@ -632,3 +660,4 @@ class FewShotVOCDefaultDataset(FewShotVOCDataset):
                         ann_root, default_ann_cfg[i]['ann_file'])
             new_ann_cfg += default_ann_cfg
         return super(FewShotVOCDataset, self).ann_cfg_parser(new_ann_cfg)
+
